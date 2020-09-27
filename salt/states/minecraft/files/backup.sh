@@ -11,9 +11,10 @@ pushd ~minecraft
 
 tar -zcf "backup/world.$(date -u +"%Y-%m-%dT%H:%M:%S%Z").tar.gz" world
 
-rclone sync backup GoogleDrive:backup
+# Keep only 6 backups
+ls -tp backup | grep -v '/$' | tail -n +6 | xargs -I {} rm -- {}
 
-ls -tp | grep -v '/$' | tail -n +6 | xargs -I {} rm -- {}
+rclone sync backup GoogleDrive:backup
 
 popd
 
