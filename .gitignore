@@ -1,4 +1,5 @@
 *.retry
 */.terraform
+*.pyc
 *.tfstate
 *.tfstate.backup

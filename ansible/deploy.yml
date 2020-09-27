@@ -2,74 +2,24 @@
   become: yes
   remote_user: root
   tasks:
-    - group:
-        name: minecraft
-    - user:
-        name: minecraft
-        shell: /bin/bash
-        groups:
-          - minecraft
     - dnf:
-        name: ["java-1.8.0-openjdk-headless", "jq"]
+        name: "python3"
         state: present
-    - shell: |
-        curl -fsSL https://launchermeta.mojang.com/mc/game/version_manifest.json \
-        | jq -r ".versions[] | select(.id == \"1.15.2\") | .url" \
-        | xargs curl -fsSL \
-        | jq -r ".downloads.server.url" \
-        | xargs curl -fsSL -o ~minecraft/minecraft_server.jar
-      args:
-        chdir: ~minecraft
-        warn: false
-    - template:
-        src: minecraft.service.j2
-        dest: /usr/lib/systemd/system/minecraft.service
-        owner: root
-        group: root
-        mode: "644"
+    - pip:
+        name: salt
     - copy:
-        src: eula.txt
-        dest: ~minecraft/eula.txt
-    - template:
-        src: server.properties.j2
-        dest: ~minecraft/server.properties
-        owner: minecraft
-        group: minecraft
-        mode: "644"
-    - template:
-        src: json.j2
-        dest: ~minecraft/ops.json
-        owner: minecraft
-        group: minecraft
-        mode: "644"
-      vars:
-        json: "{{ ops }}"
-    - template:
-        src: json.j2
-        dest: ~minecraft/whitelist.json
-        owner: minecraft
-        group: minecraft
-        mode: "644"
-      vars:
-        json: "{{ whitelist }}"
-    - template:
-        src: json.j2
-        dest: ~minecraft/banned-players.json
-        owner: minecraft
-        group: minecraft
-        mode: "644"
-      vars:
-        json: "{{ banned_players }}"
-    - template:
-        src: json.j2
-        dest: ~minecraft/banned-ips.json
-        owner: minecraft
-        group: minecraft
-        mode: "644"
-      vars:
-        json: "{{ banned_ips }}"
-    - systemd:
-        state: restarted
-        daemon_reload: yes
-        name: minecraft
-        enabled: yes
+        src: ../salt/
+        dest: /salt
+    - shell: salt-call --local -c . state.apply
+      args:
+        chdir: /salt
+    - name: Check if ~/.config/rclone/rclone.conf exists
+      local_action: stat path=~/.config/rclone/rclone.conf
+      register: file
+    - copy:
+        src: ~/.config/rclone/rclone.conf
+        dest: ~minecraft/.config/rclone/rclone.conf
+        backup: yes
+        force: no
+      when: file.stat.exists
+

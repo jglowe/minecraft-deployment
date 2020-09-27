@@ -1,13 +1,19 @@
-provider "digitalocean" {
-  api_endpoint = "https://api.digitalocean.com"
+terraform {
+  required_providers {
+    digitalocean = {
+      source = "digitalocean/digitalocean"
+    }
+  }
 }
+
+provider "digitalocean" {}
 
 resource "digitalocean_droplet" "minecraft1" {
   image    = "centos-8-x64"
   name     = "minecraft1"
   region   = "nyc1"
   size     = "s-1vcpu-2gb"
-  ssh_keys = [24386082, 16891978, 23631845]
+  ssh_keys = [28579834]
 }
 
 resource "digitalocean_domain" "domain" {
