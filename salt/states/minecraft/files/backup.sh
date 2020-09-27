@@ -12,7 +12,7 @@ pushd ~minecraft
 tar -zcf "backup/world.$(date -u +"%Y-%m-%dT%H:%M:%S%Z").tar.gz" world
 
 pushd backup
-# Keep only 6 backups
+# Keep only 5 backups
 ls -tp | grep -v '/$' | tail -n +6 | xargs -I {} rm -- {}
 popd
 
