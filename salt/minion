@@ -1,0 +1,12 @@
+file_client: local
+
+module_dirs:
+  - modules
+
+file_roots:
+  base:
+    - states
+
+pillar_roots:
+  base:
+    - pillar
