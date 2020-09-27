@@ -117,8 +117,9 @@ backup cron:
     - hour: 1
     - minute: 0
 
-minecraft:
+minecraft service:
   service.running:
+    - name: minecraft
     - enable: True
     - reload: True
     - int_delay: 60
