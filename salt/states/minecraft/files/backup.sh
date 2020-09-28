@@ -3,7 +3,7 @@
 IP={% if grains['os_family'] == 'RedHat' %}{{ grains['ip4_interfaces']['eth0'][0] }}{% elif grains['os_family'] == 'Arch' %}{{ grains['ipv4'][0] }}{% endif %}
 
 if systemctl is-active --quiet minecraft; then
-	~minecraft/bin/rcon.py 'say "Starging backup..."' $IP
+	~minecraft/bin/rcon.py 'say "Starting backup..."' $IP
 	~minecraft/bin/rcon.py 'save-off' $IP
 fi
 

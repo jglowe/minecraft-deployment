@@ -13,13 +13,21 @@
     - shell: salt-call --local -c . state.apply
       args:
         chdir: /salt
-    - name: Check if ~/.config/rclone/rclone.conf exists
-      local_action: stat path=~/.config/rclone/rclone.conf
-      register: file
-    - copy:
-        src: ~/.config/rclone/rclone.conf
-        dest: ~minecraft/.config/rclone/rclone.conf
-        backup: yes
-        force: no
-      when: file.stat.exists
+    - debug:
+        msg: "Ensure that the ~/.config/rclone/rclone.conf gets on the host!!!"
+    # - name: Check if ~/.config/rclone/rclone.conf exists
+    #   local_action: stat path=~/.config/rclone/rclone.conf
+    #   register: file
+    # - file:
+    #     path: ~minecraft/.config/rclone/
+    #     user: minecraft
+    #     group: minecraft
+    #     state: directory
+    #     recurse: yes
+    # - copy:
+    #     src: ~/.config/rclone/rclone.conf
+    #     dest: ~minecraft/.config/rclone/rclone.conf
+    #     backup: yes
+    #     force: no
+    #   when: file.stat.exists
 

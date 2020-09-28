@@ -28,7 +28,7 @@ function-permission-level=2
 rcon.port=25575
 server-port=25565
 {% if grains['os_family'] == 'RedHat' %}
-server-ip={{ grains['ip4_interfaces']['eth0'][0] }}
+server-ip=
 {% elif grains['os_family'] == 'Arch' %}
 server-ip={{ grains['ipv4'][0] }}
 {% endif %}
