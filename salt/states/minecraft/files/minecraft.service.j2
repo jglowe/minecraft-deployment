@@ -12,7 +12,7 @@ Accept=yes
 
 Environment=IP={% if grains['os_family'] == 'RedHat' %}{{ grains['ip4_interfaces']['eth0'][0] }}{% elif grains['os_family'] == 'Arch' %}{{ grains['ipv4'][0] }}{% endif %}
 
-ExecStart=/usr/bin/java -Xms512M -Xmx2048M -jar minecraft_server_{{ pillar['minecraft_version'] }}.jar nogui
+ExecStart=/usr/bin/java -Xms512M -Xmx1024M -jar minecraft_server_{{ pillar['minecraft_version'] }}.jar nogui
 
 ExecReload=/bin/sh -c "./bin/rcon.py 'reload' $IP"
 
@@ -22,7 +22,7 @@ ExecStop=/bin/sh -c "./bin/rcon.py 'say SAVED' $IP"
 ExecStop=/bin/sh -c "./bin/rcon.py 'stop' $IP"
 ExecStop=/bin/sh -c "/bin/sleep 30"
 
-Restart=on-failure
+Restart=always
 RestartSec=60s
 
 [Install]
