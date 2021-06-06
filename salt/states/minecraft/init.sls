@@ -1,8 +1,16 @@
-{% if grains['os_family'] == 'RedHat' %}
-epel-release:
-  pkg.installed:
-    - name: epel-release
-{% endif %}
+# {% if grains['os_family'] == 'RedHat' %}
+# epel-release:
+#   pkg.installed:
+#     - name: epel-release
+# {% endif %}
+
+cronie:
+  pkg:
+    - installed
+
+polkit:
+  pkg:
+    - installed
 
 java:
   pkg.installed:

@@ -9,12 +9,12 @@ terraform {
 provider "digitalocean" {}
 
 resource "digitalocean_droplet" "minecraft1" {
-  image    = "centos-8-x64"
+  image    = "fedora-34-x64"
   name     = "minecraft1"
   region   = "nyc1"
   size     = "s-1vcpu-2gb"
   ipv6     = true
-  ssh_keys = [28579834]
+  ssh_keys = [30503585, 30503589]
 }
 
 resource "digitalocean_domain" "domain" {
