@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IP={% if grains['os_family'] == 'RedHat' %}{{ grains['ip4_interfaces']['eth0'][0] }}{% elif grains['os_family'] == 'Arch' %}{{ grains['ipv4'][0] }}{% endif %}
+IP={{ ansible_default_ipv4.address }}
 
 if systemctl is-active --quiet minecraft; then
 	~minecraft/bin/rcon.py 'say "Starting backup..."' $IP

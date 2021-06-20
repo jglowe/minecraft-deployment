@@ -10,9 +10,9 @@ WorkingDirectory=/home/minecraft/
 ListenStream=127.0.0.1:9999
 Accept=yes
 
-Environment=IP={% if grains['os_family'] == 'RedHat' %}{{ grains['ip4_interfaces']['eth0'][0] }}{% elif grains['os_family'] == 'Arch' %}{{ grains['ipv4'][0] }}{% endif %}
+Environment=IP={{ ansible_default_ipv4.address }}
 
-ExecStart=/usr/bin/java -Xms512M -Xmx1024M -jar minecraft_server_{{ pillar['minecraft_version'] }}.jar nogui
+ExecStart=/usr/bin/java -Xms512M -Xmx1024M -jar minecraft_server_{{ minecraft_version }}.jar nogui
 
 ExecReload=/bin/sh -c "./bin/rcon.py 'reload' $IP"
 

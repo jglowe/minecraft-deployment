@@ -27,10 +27,10 @@ max-world-size=29999984
 function-permission-level=2
 rcon.port=25575
 server-port=25565
-{% if grains['os_family'] == 'RedHat' %}
+{% if ansible_facts['os_family'] == 'RedHat' %}
 server-ip=
-{% elif grains['os_family'] == 'Arch' %}
-server-ip={{ grains['ipv4'][0] }}
+{% elif ansible_facts['os_family'] == 'Arch' %}
+server-ip={{ ansible_default_ipv4.address }}
 {% endif %}
 spawn-npcs=true
 allow-flight=false
