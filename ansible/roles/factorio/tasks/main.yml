@@ -1,0 +1,101 @@
+- name: Install Dependencies
+  dnf:
+    name:
+      - python3
+      - cronie
+      - polkit
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+- name: Install Dependencies
+  pacman:
+    name:
+      - python3
+      - cronie
+      - polkit
+    state: present
+  when: ansible_facts['os_family'] == "Archlinux"
+- name: Install Pip Dependencies
+  pip:
+    name: pysrcds
+- name: Make factorio Group
+  group:
+    name: factorio
+    state: present
+- name: Make factorio User
+  user:
+    name: factorio
+    shell: /bin/bash
+    home: /opt/factorio
+    groups:
+      - factorio
+- name: Download and Unarchive Factorio
+  unarchive:
+    src: https://factorio.com/get-download/stable/headless/linux64
+    dest: /opt/
+    owner: factorio
+    group: factorio
+    remote_src: yes
+    mode: 0755
+- name: Make required saves folder
+  become: yes
+  become_user: factorio
+  file:
+    state: directory
+    path: /opt/factorio/saves
+    owner: factorio
+    group: factorio
+    mode: 0755
+# TODO -- Create server config
+- name: Make server-settings.json
+  become: yes
+  become_user: factorio
+  copy:
+    src: server-settings.json
+    dest: /opt/factorio/data/server-settings.json
+    owner: factorio
+    group: factorio
+    mode: 0644
+- name: Copy rcon.py file
+  copy:
+    src: rcon.py
+    dest: /opt/factorio/bin/rcon.py
+    owner: factorio
+    group: factorio
+    mode: 0755
+# TODO -- Create world gen config
+- name: Create world
+  become: yes
+  become_user: factorio
+  command:
+    argv:
+      - /opt/factorio/bin/x64/factorio
+      - --create
+      - /opt/factorio/saves/world.zip
+      # - --map-gen-settings
+      # - /opt/factorio/data/
+    creates: /opt/factorio/saves/world.zip
+- name: Chowns files
+  file:
+    path: /opt/factorio
+    owner: factorio
+    group: factorio
+    recurse: yes
+- name: Create systemd unit file
+  copy:
+    src: factorio.service
+    dest: /etc/systemd/system/factorio.service
+    owner: root
+    group: root
+    mode: 0644
+- name: Make factorio user have permissions on factorio service
+  copy:
+    src: 48-manage-factorio.rules
+    dest: /etc/polkit-1/rules.d/48-manage-factorio.rules
+    owner: root
+    group: root
+    mode: 0644
+- name: Start factorio.service
+  systemd:
+    name: factorio
+    enabled: yes
+    state: started

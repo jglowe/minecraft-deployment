@@ -1,0 +1,16 @@
+[Unit]
+Descritpion=Factorio Headless Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/factorio/
+User=factorio
+Group=factorio
+ExecStart=/opt/factorio/bin/x64/factorio --start-server /opt/factorio/saves/world.zip --server-settings /opt/factorio/data/server-settings.json --rcon-bind 127.0.0.1:10000 --rcon-password abc123
+ExecStop=/opt/factorio/bin/rcon.py --port 10000 --password abc123 "/shout server is going down" 127.0.0.1
+ExecStop=/opt/factorio/bin/rcon.py --port 10000 --password abc123 /server-save 127.0.0.1
+ExecStop=/opt/factorio/bin/rcon.py --port 10000 --password abc123 /quit 127.0.0.1
+
+[Install]
+WantedBy=multi-user.target

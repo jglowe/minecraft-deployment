@@ -1,0 +1,5 @@
+- hosts: minecraft
+  become: yes
+  remote_user: root
+  roles:
+    - minecraft

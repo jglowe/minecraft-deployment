@@ -1,0 +1,6 @@
+- hosts: factorio
+  become: yes
+  remote_user: root
+  roles:
+    - factorio
+

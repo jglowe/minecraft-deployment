@@ -1,0 +1,10 @@
+// Allow factorio to manage factorio.service;
+// fall back to implicit authorization otherwise.
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.systemd1.manage-units" &&
+        action.lookup("unit") == "factorio.service" &&
+        subject.user == "factorio") {
+        return polkit.Result.YES;
+    }
+});
+

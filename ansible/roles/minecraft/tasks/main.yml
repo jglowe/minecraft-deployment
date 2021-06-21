@@ -1,0 +1,131 @@
+- name: Install Dependencies
+  dnf:
+    name:
+      - python3
+      - java-1.8.0-openjdk-headless
+      - cronie
+      - polkit
+      - rclone
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+- name: Install Dependencies
+  pacman:
+    name:
+      - python3
+      - jre-openjdk-headless
+      - cronie
+      - polkit
+      - rclone
+    state: present
+  when: ansible_facts['os_family'] == "Archlinux"
+- name: Install Pip Dependencies
+  pip:
+    name: pysrcds
+- name: Make Minecraft Group
+  group:
+    name: minecraft
+    state: present
+- name: Make Minecraft User
+  user:
+    name: minecraft
+    shell: /bin/bash
+    home: /home/minecraft
+    groups:
+      - minecraft
+- name: Make required bin folder
+  file:
+    state: directory
+    path: /home/minecraft/bin
+    owner: minecraft
+    group: minecraft
+    mode: 0755
+- name: Make required backup folder
+  file:
+    state: directory
+    path: /home/minecraft/backup
+    owner: minecraft
+    group: minecraft
+    mode: 0755
+- name: Determine urls
+  minecraft_server_data:
+    version: "{{ minecraft_version }}"
+  register: version
+- name: Get Minecraft Jar
+  get_url:
+    url: "{{ version.url }}"
+    dest: "/home/minecraft/minecraft_server_{{ minecraft_version }}.jar"
+    checksum: "md5:{{ version.hash_digest }}"
+- name: Make Minecraft Unit
+  template:
+    src: minecraft.service.j2
+    dest: /usr/lib/systemd/system/minecraft.service
+    owner: root
+    group: root
+    mode: 0644
+- name: Make Minecraft user have permissions on minecraft service
+  copy:
+    src: 48-manage-minecraft.rules
+    dest: /etc/polkit-1/rules.d/48-manage-minecraft.rules
+    owner: root
+    group: root
+    mode: 0644
+- name: Copy rcon.py file
+  copy:
+    src: rcon.py
+    dest: /home/minecraft/bin/rcon.py
+    owner: minecraft
+    group: minecraft
+    mode: 0755
+- name: Copy backup.sh file
+  template:
+    src: backup.sh.j2
+    dest: /home/minecraft/bin/backup.sh
+    owner: minecraft
+    group: minecraft
+    mode: 0755
+- name: Copy eula.txt
+  copy:
+    src: eula.txt
+    dest: /home/minecraft/eula.txt
+    owner: minecraft
+    group: minecraft
+- name: Generate server.properties file
+  template:
+    src: server.properties.j2
+    dest: /home/minecraft/server.properties
+    owner: minecraft
+    group: minecraft
+    mode: 0644
+- name: Configure ops
+  template:
+    src: ops.json.j2
+    dest: /home/minecraft/ops.json
+    owner: minecraft
+    group: minecraft
+    mode: 0644
+- name: Configure whitelist
+  template:
+    src: whitelist.json.j2
+    dest: /home/minecraft/whitelist.json
+    owner: minecraft
+    group: minecraft
+    mode: 0644
+- name: Start minecraft.service
+  systemd:
+    name: minecraft
+    enabled: yes
+    state: started
+
+# backup cron:
+#   cron.present:
+#     - name: ~minecraft/bin/backup.sh
+#     - user: minecraft
+#     - hour: 1
+#     - minute: 0
+
+    # - source: {{ salt['minecraft_server_data.url'](pillar['minecraft_version']) }}
+    # - source_hash: {{ salt['minecraft_server_data.hash'](pillar['minecraft_version']) }}
+
+
+- debug:
+    msg: "Ensure that the ~/.config/rclone/rclone.conf gets on the host!!!"
