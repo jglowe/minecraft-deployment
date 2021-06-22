@@ -12,7 +12,7 @@ Accept=yes
 
 Environment=IP={{ ansible_default_ipv4.address }}
 
-ExecStart=/usr/bin/java -Xms512M -Xmx1024M -jar minecraft_server_{{ minecraft_version }}.jar nogui
+ExecStart=/usr/bin/java -Xms512M -Xmx4096M -jar minecraft_server_{{ minecraft_version }}.jar nogui
 
 ExecReload=/bin/sh -c "./bin/rcon.py 'reload' $IP"
 
